@@ -1,0 +1,22 @@
+<?php
+	
+	$tipoLigacao = $_POST['tipo'];
+	$dataInicio1 = $_POST['dataInicio'];
+	$dataFinal1 = $_POST['dataFinal'];
+	$ramal1 = implode(",", $_POST['ramais']);
+	$dataInicio = date("Y-m-d", strtotime($dataInicio1));
+	$dataFinal = date("Y-m-d", strtotime($dataFinal1));
+		
+	if ($tipoLigacao == '1'){
+	$tipo = 1;
+	Header("Location: ../angularcode/ajax/getCustomers.php?dataInicio=" . $dataInicio . "&dataFinal=" . $dataFinal . "&ramal1=" . $ramal1 . "&tipo1=" . $tipo . "&valor=0.11");
+	}
+	else if ($tipoLigacao == '2'){
+	 $tipo = 2;
+        Header("Location: ../angularcode/ajax/getCustomers.php?dataInicio=" . $dataInicio . "&dataFinal=" . $dataFinal . "&ramal1=" . $ramal1 . "&tipo1=" . $tipo . "&valor=0.25");
+	}
+	else if ($tipoLigacao == '3'){
+	$tipo = 3;
+        Header("Location: ../angularcode/ajax/getCustomers.php?dataInicio=" . $dataInicio . "&dataFinal=" . $dataFinal . "&ramal1=" . $ramal1 . "&tipo1=" . $tipo . "&valor=0.81");
+        }
+?>

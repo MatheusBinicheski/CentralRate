@@ -1,0 +1,94 @@
+<?php 
+ session_start(); 
+
+ $teste = $_GET['valor'];
+
+ if($teste != ''){
+
+ $dataInicio  = $_GET['dataInicio'];
+ $dataFinal = $_GET['dataFinal'];
+ $ramal1 = $_GET['ramal1'];
+ $valor = $_GET['valor'];
+ $tipo = $_GET['tipo1'];
+ $ramal = explode(",", $ramal1);
+
+ $_SESSION['dataInicio'] = $dataInicio;
+ $_SESSION['dataFinal'] = $dataFinal;
+ $_SESSION['ramal'] = $ramal;
+ $_SESSION['valor'] = $valor;
+ $_SESSION['tipo1'] = $tipo;
+
+ Header ("location: ../index.php?tipo=" . $tipo . "");
+
+}else{
+
+ $a = $_SESSION['dataInicio'];
+ $b = $_SESSION['dataFinal'];
+ $c = $_SESSION['ramal'];
+ $d = $_SESSION['valor'];
+ $e = $_SESSION['tipo1'];
+
+$DB_HOST = '127.0.0.1';
+$DB_USER = 'root';
+$DB_PASS = '';
+$DB_NAME = 'asteriskcdrdb';
+$mysqli = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
+
+
+if ($e == '1')
+{
+for ($i = 0; $i <= 150; $i++) {
+                if($c[$i] != ''){
+                $ramal2 = $c[$i];
+//$query="select distinct src, dst, calldate, billsec /60 as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and src = $ramal2 and dst > 6000 and (select substring(dst,1,1)) < 5 and (select length(dst) as numero2) = 8 and disposition = 'ANSWERED' order by calldate";
+
+$query="select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and src = $ramal2 and dst > 6000 and (select substring(dst,1,1)) < 5 and (select length(dst) as numero2) = 8 and disposition = 'ANSWERED' order by calldate";
+
+//$query="select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total, sum(FORMAT(((billsec /60) * $d), 2)) as total2 from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and src = $ramal2 and dst > 6000 and (select substring(dst,1,1)) < 5 and (select length(dst) as numero2) = 8 and disposition = 'ANSWERED' order by calldate";
+
+	$result = $mysqli->query($query) or die($mysqli->error.__LINE__);
+        while($row = $result->fetch_assoc()) {
+                $arr[] = $row;
+        	}
+	    }
+	}
+    }
+
+
+else if ($e == '2')
+{
+for ($i = 0; $i <= 150; $i++) {
+                if($c[$i] != ''){
+                $ramal2 = $c[$i];
+
+$query="select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and src = $ramal2 and dst > 6000 and (select substring(dst,3,1)) BETWEEN 1 AND 5 and (select length(dst) as numero2) = 10 and disposition = 'ANSWERED' union select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and src = $ramal2 and dst > 6000 and (select substring(dst,4,1)) BETWEEN 1 AND 5 and (select length(dst) as numero2) = 11 and disposition = 'ANSWERED' union select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and src = $ramal2 and dst > 6000 and (select substring(dst,6,1)) BETWEEN 1 AND 5 and (select length(dst) as numero2) = 13 and disposition = 'ANSWERED' order by calldate";
+ $result = $mysqli->query($query) or die($mysqli->error.__LINE__);
+        while($row = $result->fetch_assoc()) {
+                $arr[] = $row;
+               }
+           }
+      }
+}
+
+else if ($e == '3')
+{
+for ($i = 0; $i <= 150; $i++) {
+                if($c[$i] != ''){
+                $ramal2 = $c[$i];
+	$query="select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and dst > 6000 and (select substring(dst,1,1)) > 6 and (select length(dst) as numero2) = 8 and disposition = 'ANSWERED' and src = $ramal2 union select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and dst > 6000 and (select substring(dst,4,1)) > 7 and (select length(dst) as numero2) = 11 and disposition = 'ANSWERED' and src = $ramal2 union select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and dst > 6000 and (select substring(dst,3,1)) > 7 and (select length(dst) as numero2) = 10 and disposition = 'ANSWERED' and src = $ramal2 union select distinct src, dst, calldate, REPLACE(FORMAT(billsec /60, 2), '.', ',') as billsec, FORMAT(((billsec /60) * $d), 2) as total from cdr where calldate >= '$a 00:00:00' and calldate <= '$b 23:59:59' and dst > 6000 and (select substring(dst,6,1)) > 7 and (select length(dst) as numero2) = 13 and disposition = 'ANSWERED' and src = $ramal2"; 
+	
+ $result = $mysqli->query($query) or die($mysqli->error.__LINE__);
+        while($row = $result->fetch_assoc()) {
+                $arr[] = $row;
+               }
+           }
+      }
+}
+
+# JSON-encode the response
+$json_response = json_encode($arr);
+
+// # Return the response
+echo $json_response;
+}        	
+?>

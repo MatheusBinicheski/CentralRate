@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SAAP BI</title>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+    
+    <link rel="stylesheet" href="css/estilos.css">
+    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand">SAAP</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Principal</a></li>
+            <li><a href="locais/listar.php">Chamadas Locais</a></li>
+            <li><a href="nacionais/listar.php">Chamadas Nacionais</a></li>
+            <li><a href="locaisNacionais/listar.php">Chamadas Locais e Nacionais</a></li>
+            <li><a href="questao/listar.php">Questão</a></li>
+            <li><a href="turma/listar.php">Turma</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+      
+    <div class="container tema">
+        <img src="logo_central.png" alt="Mountain View">
+    </div>
+<!-- Importado do Antigo Bilhetador -->
+<?php
+
+$link = new PDO('mysql:host=localhost;dbname=asteriskcdrdb', 'root', '');
+if (!$link) {
+    echo 'Não foi possível conectar';
+}
+$pesquisa = $link->query("SELECT distinct src FROM cdr where (select substring(src,1,1)) like '%4%' and (select length(src)) < 5");
+
+?>
+<!doctype html>
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="../bootstrapLogin/assets/bootstrap.min.js"></script>
+        <link href="../bootstrapLogin/assets/bootstrap.min.css" rel="stylesheet">
+<script src="js/faturaTodos.js"></script>
+<script>
+	 $('.selectpicker').selectpicker({
+      style: 'btn-info',
+      size: 4
+  });
+</script>
+
+<center>
+<meta charset="utf-8">
+<title>Tarifador 0800 - Central IT</title>
+</head>
+<body>
+<form method="post" action="controle.php">
+<table width="400" border="0">
+  <tbody>
+    <tr>
+      <td>Contratos</td>
+      <td>
+      <select class="selectpicker" name="ramais[]" multiple style="height:auto; min-height:360px; width:145px">
+                    <?php
+
+
+while($linha = $pesquisa ->fetch(PDO::FETCH_OBJ)){
+    echo "<option value='$linha->src'>$linha->src</option>";
+}
+?>
+      </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Data Inicio</td>
+      <td><input name="dataInicio" type="date"></td>
+    </tr>
+    <tr>
+      <td>Data Final</td>
+      <td><input name="dataFinal" type="date"></td>
+    </tr>
+    <tr>
+        <input type="checkbox" name="tipo" value="1">Ligações Locais
+        <input type="checkbox" name="tipo" value="2">Ligações Nacionais
+        <input type="checkbox" name="tipo" value="3">Ligações Locais e Nacionais
+        <input type="checkbox" name="tipo" value="4">Ligações Celular
+        <input type="checkbox" name="tipo" value="5">Fatura Total por Ramal
+        <input type="checkbox" name="tipo" value="6">Fatura Total Todos os Ramais
+    </tr>
+  </tbody>
+</table>
+<input type="submit" value="GerarFatura" />
+</form>
+
+<!-- Final da Importacao -->
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<?php
+    require("../login/config.php");
+    if(empty($_SESSION['user']))
+    {
+        header("Location: ../login/index.php");
+        die();
+    }
+$link = new PDO('mysql:host=localhost;dbname=asteriskcdrdb', 'root', '');
+if (!$link) {
+    echo 'Não foi possível conectar';
+}
+$pesquisa = $link->query("SELECT distinct src FROM cdr where (select substring(src,1,1)) like '%4%' and (select length(src)) < 5");
+
+?>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CentralRate</title>
+        <link href="../login/assets/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="chosen.css">
+	<link rel="stylesheet" href="datepicker.css">
+        <script src"chosen.jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+    <script>
+      $(function() {
+        $('.chosen-select').chosen();
+        $('.chosen-select-deselect').chosen({ allow_single_deselect: true });
+      });
+    </script>
+	<script src="bootstrap-datepicker.js"></script>
+	<script type"text/javascript">
+
+$(function(){
+var startDate = new Date('01/01/2012');
+var FromEndDate = new Date();
+var ToEndDate = new Date();
+
+ToEndDate.setDate(ToEndDate.getDate()+365);
+
+$('.from_date').datepicker({
+
+    weekStart: 1,
+    startDate: '01/01/2012',
+    endDate: FromEndDate, 
+    autoclose: true
+})
+    .on('changeDate', function(selected){
+        startDate = new Date(selected.date.valueOf());
+        startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+        $('.to_date').datepicker('setStartDate', startDate);
+    }); 
+$('.to_date')
+    .datepicker({
+
+        weekStart: 1,
+        startDate: startDate,
+        endDate: ToEndDate,
+        autoclose: true
+    })
+    .on('changeDate', function(selected){
+        FromEndDate = new Date(selected.date.valueOf());
+        FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+        $('.from_date').datepicker('setEndDate', FromEndDate);
+    });
+});
+	</script>
+
+	<title>CentralRate</title>
+
+    <link rel="icon" href="../centralRate/logo_central.png">
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="signin.css" rel="stylesheet">
+
+</head>
+<ul class="nav pull-right">
+<li><a class="btn btn-lg btn-primary btn-block" href="../login/logout.php">Sair</a></li>
+</ul>
+<h1 class="form-signin"><img alt="CentralRate" src="../centralRate/logo_central.png"></h1>
+<div class="container">
+<form class="form-signin" method="post" action="controle.php">
+	<h3 class="form-signin-heading">Tipo Ligação</h3>
+        <select name="tipo" data-placeholder="Escolha o tipo de Ligação" class="chosen-select" tabindex="3">
+	<option value="0"></option>
+	<option value="1">Ligações Locais</option>
+        <option value="2">Ligações Nacionais</option>
+        <option value="3">Ligações Locais e Nacionais</option>
+	</select>
+	<h3 class="form-signin-heading">Ramais</h3>
+	<select name="ramais[]" data-placeholder="Escolha os ramais:" class="chosen-select" multiple tabindex="3">
+                    <?php
+
+
+while($linha = $pesquisa ->fetch(PDO::FETCH_OBJ)){
+    echo "<option value='$linha->src'>$linha->src</option>";
+}
+?>
+      </select>
+	<h3 class="form-signin-heading">Data Início</h3>
+	<input name="dataInicio" type="text" class="from_date" placeholder="mm/dd/yyyy" contenteditable="false">
+	<h3 class="form-signin-heading">Data Final</h3>
+	<input name="dataFinal" type="text" class="to_date" placeholder="mm/dd/yyyy" contenteditable="false"> 
+	<input type="submit" class="btn btn-primary btn-block" value="Gerar Fatura" />
+	</div>
+</form>
+</body>
+</html>
